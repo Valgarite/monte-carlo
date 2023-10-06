@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monte Carlo</title>
+</head>
+
+<body>
+    <main>
+        <article>
+            <h3>Entrada</h3>
+            <form>
+                <!-- Hacer que estos dos input compartan valores -->
+                <input type="range" id="sim-slider">
+                <input type="number" id="sim-quantity">
+                <input type="submit" value="sim-start">
+            </form>
+        </article>
+        <article>
+            <h3>Vista</h3>
+            <canvas id="graph" width="512"></canvas>
+        </article>
+        <article>
+            <h3>Salida</h3>
+            <form>
+                <p>
+                    Resultado matemático de la integral: <!-- (este siempre va a ser el mismo)-->
+                </p>
+                <p id="sim-result">
+                    Resultado aproximado por método de Monte Carlo:
+                </p>
+                <p id="percent-error">
+                    Porcentaje de error entre valor real y simulación:
+                </p>
+            </form>
+        </article>
+    </main>
+</body>
+<script src="index.js"></script>
+</html>

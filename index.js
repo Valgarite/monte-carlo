@@ -20,18 +20,21 @@ function drawSim() {
     }
 }
 
-drawFunction(2, 3, 100)
-function drawFunction(start, end, length) {
+console.log(crearTablaDeValores(2, 3, 100))
+function crearTablaDeValores(start, end, length) {
     const xList = Array.from({ length }, (x, i) => {
         const unit = start + (end - start) / length * i
-        return unit
+        return rounder(unit, 100)
     })
-    console.log(xList)
+    xList.push(end)
+    const yList = xList.map((x) => { return rounder((3 * (x ** 2)), 100) })
+    return { xList, yList }
 }
 
 function drawAxis(currentPx, halfPx) {
-    const check = Math.round(currentPx)
+    const check = Math.fround(currentPx)
     ctx.beginPath()
+    ctx.lineWidth = 3
     ctx.moveTo(begin, currentPx)
     ctx.lineTo(finish, currentPx)
     if (halfPx.x == check) { ctx.strokeStyle = "cyan" } else { ctx.strokeStyle = "orange" }
@@ -41,4 +44,8 @@ function drawAxis(currentPx, halfPx) {
     ctx.lineTo(currentPx, finish)
     if (halfPx.y == check) { ctx.strokeStyle = "cyan" } else { ctx.strokeStyle = "orange" }
     ctx.stroke()
+}
+
+function rounder(number, qtyToRound) {
+    return Math.round(number * qtyToRound) / qtyToRound
 }

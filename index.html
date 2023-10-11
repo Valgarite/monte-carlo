@@ -13,9 +13,9 @@
             <h3>Entrada</h3>
             <form>
                 <!-- Hacer que estos dos input compartan valores -->
-                <input type="range" id="sim-slider">
-                <input type="number" id="sim-quantity">
-                <input type="submit" value="sim-start">
+                <input type="range" id="sim-slider" onchange="valueUpdate()">
+                <input type="number" id="sim-quantity" onchange="valueUpdate()">
+                <input type="submit" value="sim-start" onclick="drawSim()">
             </form>
         </article>
         <article>

@@ -1,21 +1,27 @@
-const inputs = ["graph", "sim-slider", "sim-quantity"]
-const [graphCanvas, slider, numberInput] = inputs.map(id => { return document.getElementById(id) })
+const elementIds = ["graph", "sim-slider", "sim-quantity"]
+const [graphCanvas, slider, numberInput] = elementIds.map(id => { return document.getElementById(id) })
 const canvasSize = graphCanvas.width
 graphCanvas.height = canvasSize
 const [begin, finish] = [0, canvasSize]
 const ctx = graphCanvas.getContext("2d")
 ctx.font = "16px Arial";
-ctx.fillStyle = "#fff"
 //Estos de acá abajo tienen valores ajustables.
-const tov = createTableOfValues(2, 3, 100)
+const [lim1, lim2, accuracy] = [2, 3, 100]
+const tov = createTableOfValues(lim1, lim2, accuracy)
+const area = tov.yList[tov.yList.length - 1] * (lim2 - lim1)
 const separation = { x: 16, y: 16 }
 const squareSize = { x: canvasSize / separation.x, y: canvasSize / separation.y }
-const [offsetX, offsetY] = [squareSize.x * -4, squareSize.y * 7]
+const [offsetX, offsetY] = [-7 * squareSize.x, 0 * squareSize.y]
+const axisOffset = { x: 0 * squareSize.x, y: 0 * squareSize.y }
+const scale = { x: 4 / 1, y: 1 / 4 }
+//Fin de los valores ajustables.
 const halfPx = { x: Math.round(canvasSize / 2 + offsetX), y: Math.round(canvasSize / 2 + offsetY) }
-const scale = { x: 2 / 1, y: 1 / 2 }
-// drawSim()
+drawSim()
 
 function drawSim() {
+    ctx.fillStyle = "#0000ff"
+    ctx.fillRect(0, 0, graphCanvas.width, graphCanvas.height)
+    ctx.fillStyle = "#fff"
     for (let currentPx = 0; currentPx <= canvasSize; currentPx += squareSize.x) {
         drawAxis(currentPx, halfPx, "y", scale)
     }
@@ -24,14 +30,10 @@ function drawSim() {
     }
     // console.log(tov)
     drawFunction()
-    ctx.beginPath()
-    tov.xList.forEach((xValue, i)=>{
-        ctx.fillRect(xValue, )
-    })
+    monteCarlo(tov.xList, tov.yList, numberInput.value)
 }
 function drawAxis(currentPx, halfPx, dir, scale) {
     const check = Math.fround(currentPx)
-    const axisOffset = { x: 0 * squareSize.x, y: 0 * squareSize.y }
     ctx.beginPath()
     ctx.lineWidth = 3
     if (dir == "x") {
@@ -61,7 +63,7 @@ function drawFunction() {
         const y = tov.yList[i] * -squareSize.y * scale.y + halfPx.y
         // console.log(x, y)
         ctx.lineTo(x, y)
-        console.log(xValue)
+        // console.log(xValue)
     });
     ctx.strokeStyle = "#FFFF00"
     ctx.stroke()
@@ -72,12 +74,65 @@ function createTableOfValues(start, end, length) {
         return rounder(unit, 100)
     })
     xList.push(end)
-    const yList = xList.map((x) => { return rounder((3 * (x ** 2)), 100) })
+    const yList = xList.map((x) => rounder(mathFunct(x), 100))
     return { xList, yList }
 }
 function rounder(number, qtyToRound) {
     return Math.round(number * qtyToRound) / qtyToRound
 }
 function valueUpdate() {
-    
+
+}
+function mathFunct(x) {
+    return 3 * x ** 2
+}
+function monteCarlo(xValues, yValues, simQty) {
+    //CREACIÓN DE VALORES
+    const getLast = (list) => list[list.length - 1]
+    // const xLast = getLast(xValue)
+    const yLast = getLast(yValues)
+    const mcList = []
+    let aciertos = 0
+    for (let index = 0; index < simQty; index++) {
+        const [xIndex, y] = [getRandomIntInclusive(0, xValues.length), getRandomInclusive(0, yLast)]
+        const comparedValues = { x: xValues[xIndex], y: yValues[xIndex] }
+        //REPRESENTARLOS EN LA GRÁFICA
+        const xDraw = xValues[xIndex] * squareSize.x * scale.x + halfPx.x
+        const yDraw = y * -squareSize.y * scale.y + halfPx.y
+        // console.log(yDraw)
+        // console.log(xDraw, yDraw)
+        if (y > comparedValues.y) {
+            ctx.fillStyle = "#ff9900"
+            ctx.fillRect(xDraw, yDraw, -2, -2); // fill in the pixel
+        } else {
+            aciertos++
+            ctx.fillStyle = "#00fefe"
+            ctx.fillRect(xDraw, yDraw, 2, 2); // fill in the pixel
+        }
+        mcList.push(xValues[xIndex], y)
+    }
+    const passedRatio = aciertos / simQty
+    const areaCalculada = passedRatio * area
+    const errorPercent = Math.abs(areaCalculada - 19) / 19 * 100
+    console.log(passedRatio, areaCalculada, errorPercent)
+}
+function getRandomIntInclusive(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1) + min); // The maximum is inclusive and the minimum is inclusive
+}
+function getRandomInclusive(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    const calc = rounder(Math.random() * (max - min + 1) + min, 1000)
+    return calc // The maximum is inclusive and the minimum is inclusive
+}
+function updateInputs(id, value) {
+    var inputs = document.getElementsByClassName("control");
+    for (var i = 0; i < inputs.length; i++) {
+        if (inputs[i].id !== id) {
+            inputs[i].value = value;
+            console.log(value)
+        }
+    }
 }

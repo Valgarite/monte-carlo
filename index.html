@@ -16,7 +16,7 @@
             <input type="range" class="control" id="sim-slider" min="1" max="10000"
                 onchange="updateInputs(this.id, this.value);">
             <input type="number" class="control" id="sim-quantity" onchange="updateInputs(this.id, this.value);"
-                value="100">
+                value="1000">
             <button onclick="drawSim();">Comenzar simulación</button>
         </article>
         <article>
@@ -27,7 +27,10 @@
             <h3>Salida</h3>
             <form>
                 <p>
-                    Resultado matemático de la integral: <!-- (este siempre va a ser el mismo)-->
+                    Resultado matemático de la integral: 19<!-- (este siempre va a ser el mismo)-->
+                </p>
+                <p id="sim-success">
+                    Porcentaje de éxitos: 
                 </p>
                 <p id="sim-result">
                     Resultado aproximado por método de Monte Carlo:

@@ -6,14 +6,14 @@ const [begin, finish] = [0, canvasSize]
 const ctx = graphCanvas.getContext("2d")
 ctx.font = "16px Arial";
 //Estos de acá abajo tienen valores ajustables.
-const [lim1, lim2, accuracy] = [2, 3, 100]
+const [lim1, lim2, accuracy] = [2, 3, 200]
 const tov = createTableOfValues(lim1, lim2, accuracy)
 const area = tov.yList[tov.yList.length - 1] * (lim2 - lim1)
 const separation = { x: 16, y: 16 }
 const squareSize = { x: canvasSize / separation.x, y: canvasSize / separation.y }
-const [offsetX, offsetY] = [-7 * squareSize.x, 0 * squareSize.y]
+const [offsetX, offsetY] = [0 * squareSize.x, 0 * squareSize.y]
 const axisOffset = { x: 0 * squareSize.x, y: 0 * squareSize.y }
-const scale = { x: 4 / 1, y: 1 / 4 }
+const scale = { x: 2 / 1, y: 1 / 4 }
 //Fin de los valores ajustables.
 const halfPx = { x: Math.round(canvasSize / 2 + offsetX), y: Math.round(canvasSize / 2 + offsetY) }
 drawSim()
@@ -114,7 +114,7 @@ function monteCarlo(xValues, yValues, simQty) {
     const passedRatio = aciertos / simQty
     const areaCalculada = passedRatio * area
     const errorPercent = Math.abs(areaCalculada - 19) / 19 * 100
-    console.log(passedRatio, areaCalculada, errorPercent)
+    simResultToDocument(areaCalculada, errorPercent, passedRatio * 100)
 }
 function getRandomIntInclusive(min, max) {
     min = Math.ceil(min);
@@ -135,4 +135,10 @@ function updateInputs(id, value) {
             console.log(value)
         }
     }
+}
+function simResultToDocument(areaFinal, porcentajeDeError, porcentajeAciertos) {
+    const [simRes, percentErr, simSuccess] = ["sim-result", "percent-error", "sim-success"].map(el => document.getElementById(el))
+    percentErr.innerText = "Porcentaje de error entre valor real y simulación: " + rounder(porcentajeDeError, 100) + "%"
+    simRes.innerText = "Resultado aproximado por método de Monte Carlo: " + rounder(areaFinal, 100)
+    simSuccess.innerText = "Porcentaje de éxitos: " + rounder(porcentajeAciertos, 100) + "%"
 }

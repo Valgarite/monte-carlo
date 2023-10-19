@@ -5,15 +5,17 @@ graphCanvas.height = canvasSize
 const [begin, finish] = [0, canvasSize]
 const ctx = graphCanvas.getContext("2d")
 ctx.font = "16px Arial";
+ctx.textAlign = "right"
 //Estos de acá abajo tienen valores ajustables.
 const [lim1, lim2, accuracy] = [2, 3, 200]
 const tov = createTableOfValues(lim1, lim2, accuracy)
 const area = tov.yList[tov.yList.length - 1] * (lim2 - lim1)
 const separation = { x: 16, y: 16 }
 const squareSize = { x: canvasSize / separation.x, y: canvasSize / separation.y }
-const [offsetX, offsetY] = [0 * squareSize.x, 0 * squareSize.y]
+const [offsetX, offsetY] = [-6 * squareSize.x, 2 * squareSize.y]
 const axisOffset = { x: 0 * squareSize.x, y: 0 * squareSize.y }
 const scale = { x: 2 / 1, y: 1 / 4 }
+const valorReal = 24
 //Fin de los valores ajustables.
 const halfPx = { x: Math.round(canvasSize / 2 + offsetX), y: Math.round(canvasSize / 2 + offsetY) }
 drawSim()
@@ -41,7 +43,7 @@ function drawAxis(currentPx, halfPx, dir, scale) {
         ctx.lineTo(finish, currentPx)
         const text = ((currentPx - halfPx.x) / separation.x / 2) / scale.x
         if (text) {
-            ctx.fillText(text, currentPx, halfPx.y + axisOffset.y);
+            ctx.fillText(text, currentPx, halfPx.y + axisOffset.y + squareSize.y/2);
         }
         if (halfPx.y + axisOffset.y == check) { ctx.strokeStyle = "#00ff00" } else { ctx.strokeStyle = "#ff00ff" }
     } else if (dir == "y") {
@@ -84,13 +86,15 @@ function valueUpdate() {
 
 }
 function mathFunct(x) {
-    return 3 * x ** 2
+    return (3 * x ** 2 + 2*x)
 }
 function monteCarlo(xValues, yValues, simQty) {
     //CREACIÓN DE VALORES
     const getLast = (list) => list[list.length - 1]
     // const xLast = getLast(xValue)
     const yLast = getLast(yValues)
+    // console.log(yValues)
+    // console.log(yLast)
     const mcList = []
     let aciertos = 0
     for (let index = 0; index < simQty; index++) {
@@ -113,8 +117,9 @@ function monteCarlo(xValues, yValues, simQty) {
     }
     const passedRatio = aciertos / simQty
     const areaCalculada = passedRatio * area
-    const errorPercent = Math.abs(areaCalculada - 19) / 19 * 100
+    const errorPercent = Math.abs(areaCalculada - valorReal) / valorReal * 100
     simResultToDocument(areaCalculada, errorPercent, passedRatio * 100)
+    // console.log(mcList)
 }
 function getRandomIntInclusive(min, max) {
     min = Math.ceil(min);
@@ -124,7 +129,7 @@ function getRandomIntInclusive(min, max) {
 function getRandomInclusive(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
-    const calc = rounder(Math.random() * (max - min + 1) + min, 1000)
+    const calc = rounder(Math.random() * (max - min) + min, 1000)
     return calc // The maximum is inclusive and the minimum is inclusive
 }
 function updateInputs(id, value) {
@@ -132,7 +137,7 @@ function updateInputs(id, value) {
     for (var i = 0; i < inputs.length; i++) {
         if (inputs[i].id !== id) {
             inputs[i].value = value;
-            console.log(value)
+            // console.log(value)
         }
     }
 }
